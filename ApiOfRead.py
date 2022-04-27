@@ -110,7 +110,7 @@ final_list=fixed_api
 if int(app_num) > 1:
     print('In multi-account/application mode, a bunch of *** may appear in the log report, which is normal')
 print("If the number of APIs is less than the specified value, the API authorization has not been done properly, or the onedrive has not been initialized successfully. For the former, please re-authorize and obtain a Microsoft key replacement, for the latter, please wait a few days")
-print('common '+str(app_num)+r' Account/App，'+r'per account/app '+str(config['rounds'])+' round') 
+print('Total '+str(app_num)+r' Account/App，'+r' per account/app '+str(config['rounds'])+' round') 
 for r in range(1,config['rounds']+1):
     if config['rounds_delay'][0] == 1:
         time.sleep(random.randint(config['rounds_delay'][1],config['rounds_delay'][2]))		
