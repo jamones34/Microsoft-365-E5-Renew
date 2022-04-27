@@ -8,13 +8,13 @@ if app_num == '':
     app_num = '1'
 access_token_list=['wangziyingwen']*int(app_num)
 ###########################
-# config选项说明
-# 0：关闭  ， 1：开启
-# api_rand：是否随机排序api （开启随机抽取12个，关闭默认初版10个）。默认1开启
-# rounds: 轮数，即每次启动跑几轮。
-# rounds_delay: 是否开启每轮之间的随机延时，后面两参数代表延时的区间。默认0关闭
-# api_delay: 是否开启api之间的延时，默认0关闭
-# app_delay: 是否开启账号之间的延时，默认0关闭
+# config Option Description
+# 0：off,  ， 1：on
+# api_rand：Whether to sort apis randomly (12 random selections are enabled, 10 are disabled by default). Default 1 is on
+# rounds: The number of rounds, that is, how many rounds are run each time it is started.
+# rounds_delay: Whether to enable random delay between rounds, the last two parameters represent the delay interval. Default 0 off
+# api_delay: Whether to enable the delay between APIs, the default is 0 to disable
+# app_delay: Whether to enable the delay between accounts, the default is 0 to disable
 ########################################
 config = {
          'api_rand': 1,
@@ -54,7 +54,7 @@ api_list = [
            r'https://graph.microsoft.com/beta/me/messages?$select=internetMessageHeaders&$top',
            ]
 
-#微软refresh_token获取
+#Microsoft refresh_token acquisition
 def getmstoken(ms_token,appnum):
     headers={'Content-Type':'application/x-www-form-urlencoded'
             }
@@ -67,14 +67,14 @@ def getmstoken(ms_token,appnum):
     html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token',data=data,headers=headers)
     jsontxt = json.loads(html.text)
     if 'refresh_token' in jsontxt:
-        print(r'账号/应用 '+str(appnum)+' 的微软密钥获取成功')
+        print(r'Account/App '+str(appnum)+' The Microsoft key was obtained successfully')
     else:
-        print(r'账号/应用 '+str(appnum)+' 的微软密钥获取失败'+'\n'+'请检查secret里 CLIENT_ID , CLIENT_SECRET , MS_TOKEN 格式与内容是否正确，然后重新设置')
+        print(r'Account/App '+str(appnum)+' The Microsoft key acquisition failed'+'\n'+'Please check whether the format and content of CLIENT_ID , CLIENT_SECRET , MS_TOKEN in secret are correct, and then reset')
     refresh_token = jsontxt['refresh_token']
     access_token = jsontxt['access_token']
     return access_token
 
-#调用函数
+#call function
 def runapi(apilist,a):
     localtime = time.asctime( time.localtime(time.time()) )
     access_token=access_token_list[a-1]
@@ -84,33 +84,33 @@ def runapi(apilist,a):
             }
     for b in range(len(apilist)):	
         if req.get(api_list[apilist[b]],headers=headers).status_code == 200:
-            print('第'+str(apilist[b])+"号api调用成功")
+            print('the first'+str(apilist[b])+"No. api call succeeded")
         else:
             print("pass")
         if config['api_delay'][0] == 1:
             time.sleep(random.randint(config['api_delay'][1],config['api_delay'][2]))
 
-#一次性获取access_token，降低获取率
+#Obtain access_token at one time to reduce the acquisition rate
 for a in range(1, int(app_num)+1):
     client_id=os.getenv('CLIENT_ID_'+str(a))
     client_secret=os.getenv('CLIENT_SECRET_'+str(a))
     ms_token=os.getenv('MS_TOKEN_'+str(a))
     access_token_list[a-1]=getmstoken(ms_token,a)
 
-#随机api序列
+#random api sequence
 fixed_api=[0,1,5,6,20,21]
-#保证抽取到outlook,onedrive的api
+#Guaranteed to extract the api of outlook and onedrive
 ex_api=[2,3,4,7,8,9,10,22,23,24,25,26,27,13,14,15,16,17,18,19,11,12]
-#额外抽取填充的api
+#Additional extraction and filling api
 fixed_api.extend(random.sample(ex_api,6))
 random.shuffle(fixed_api)
 final_list=fixed_api
 
-#实际运行
+#Actual operation
 if int(app_num) > 1:
-    print('多账户/应用模式下，日志报告里可能会出现一堆***，属于正常情况')
-print("如果api数量少于规定值，则是api赋权没有弄好，或者是onedrive还没有初始化成功。前者请重新赋权并获取微软密钥替换，后者请稍等几天")
-print('共 '+str(app_num)+r' 账号/应用，'+r'每个账号/应用 '+str(config['rounds'])+' 轮') 
+    print('In multi-account/application mode, a bunch of *** may appear in the log report, which is normal')
+print("If the number of APIs is less than the specified value, the API authorization has not been done properly, or the onedrive has not been initialized successfully. For the former, please re-authorize and obtain a Microsoft key replacement, for the latter, please wait a few days")
+print('common '+str(app_num)+r' Account/App，'+r'per account/app '+str(config['rounds'])+' round') 
 for r in range(1,config['rounds']+1):
     if config['rounds_delay'][0] == 1:
         time.sleep(random.randint(config['rounds_delay'][1],config['rounds_delay'][2]))		
@@ -119,11 +119,11 @@ for r in range(1,config['rounds']+1):
             time.sleep(random.randint(config['app_delay'][1],config['app_delay'][2]))
         client_id=os.getenv('CLIENT_ID_'+str(a))
         client_secret=os.getenv('CLIENT_SECRET_'+str(a))
-        print('\n'+'应用/账号 '+str(a)+' 的第'+str(r)+'轮 '+time.asctime(time.localtime(time.time()))+'\n')
+        print('\n'+'App/Account '+str(a)+' First'+str(r)+'round '+time.asctime(time.localtime(time.time()))+'\n')
         if config['api_rand'] == 1:
-            print("已开启随机顺序,共十二个api,自己数")
+            print("Random order has been turned on, a total of 12 apis, their own number")
             apilist=final_list
         else:
-            print("原版顺序,共十个api,自己数")
+            print("The original order, a total of ten APIs, count by yourself")
             apilist=[5,9,8,1,20,24,23,6,21,22]
         runapi(apilist,a)
