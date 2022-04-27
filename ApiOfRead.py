@@ -67,9 +67,9 @@ def getmstoken(ms_token,appnum):
     html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token',data=data,headers=headers)
     jsontxt = json.loads(html.text)
     if 'refresh_token' in jsontxt:
-        print(r'Account/App '+str(appnum)+' The Microsoft key was obtained successfully')
+        print(r'The Microsoft key for the account/app '+str(appnum)+' was obtained successfully')
     else:
-        print(r'Account/App '+str(appnum)+' The Microsoft key acquisition failed'+'\n'+'Please check whether the format and content of CLIENT_ID , CLIENT_SECRET , MS_TOKEN in secret are correct, and then reset')
+        print(r'The Microsoft key for the account/app '+str(appnum)+' Failed to obtain'+'\n'+'Please check whether the format and content of CLIENT_ID , CLIENT_SECRET , MS_TOKEN in secret are correct, and then reset')
     refresh_token = jsontxt['refresh_token']
     access_token = jsontxt['access_token']
     return access_token
@@ -84,7 +84,7 @@ def runapi(apilist,a):
             }
     for b in range(len(apilist)):	
         if req.get(api_list[apilist[b]],headers=headers).status_code == 200:
-            print('the first'+str(apilist[b])+"No. api call succeeded")
+            print('The api call of No. '+str(apilist[b])+" succeeded")
         else:
             print("pass")
         if config['api_delay'][0] == 1:
