@@ -119,7 +119,7 @@ for r in range(1,config['rounds']+1):
             time.sleep(random.randint(config['app_delay'][1],config['app_delay'][2]))
         client_id=os.getenv('CLIENT_ID_'+str(a))
         client_secret=os.getenv('CLIENT_SECRET_'+str(a))
-        print('\n'+'App/Account '+str(a)+' First'+str(r)+'round '+time.asctime(time.localtime(time.time()))+'\n')
+        print('\n'+'App/account '+str(a)+' of'+str(r)+' round '+time.asctime(time.localtime(time.time()))+'\n')
         if config['api_rand'] == 1:
             print("Random order has been turned on, a total of 12 apis, their own number")
             apilist=final_list
